@@ -1,0 +1,31 @@
+'''
+# ------------
+#  commands
+# ------------
+
+'''
+
+# -- check status --
+watch qstat -u cb4968
+qstat -u cb4968                 # lists all running jobs
+qstat -f <job_id>
+qstat -f 137915924.gadi-pbs     # checks resources for job
+
+# -- cancel jobs --
+qdel -u cb4968                  # deletes all running jobs
+qdel <job_id>                   # delete specific job
+qselect -u cb4968 | xargs qdel
+
+# -- modules --
+module use /g/data/xp65/public/modules
+module load conda/analysis3-25.02
+source /g/data/nf33/public/hackathon-2025/venvs/hackathon_env/bin/activate
+
+
+
+
+
+
+
+
+
