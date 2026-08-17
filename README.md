@@ -98,6 +98,6 @@ Disentangling_the_Role_of_Precipitation_Clustering_in_the_Variability_of_the_Tro
 ### How to use repository
 Scripts to generate metrics from IMERG rainfall data and ERA5 re-analysis data are found in the "gadi" folder. <br>
 Scripts to generate metrics from GRIDSAT-B1 brightness temperature data and CERES syn1deg data are found in the "local" folder. <br>
-These metrics can also be found on Zenodo, DOI: 10.5281/zenodo.16946243 <br>
+These metrics can also be found on Zenodo, DOI: 10.5281/zenodo.21974459 <br>
 Note: This repository only includes examples of how the key metrics were generated. A more complete repository is available upon request.
 
