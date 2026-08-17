@@ -6,46 +6,39 @@ This repository includes example scripts to fetch and pre-process data and gener
 ### Repository structure
 ```bash
 ├── gadi/
-    ├── get_metrics/
-    │   ├── models/
-    │   │   └── cmip/...
-    │   │       └── doc_metrics/...
-    │   │           └── mean_area/
-    │   │               ├── calc_metric.py
-    │   │               ├── main_func.py
-    │   │               └── submit_as_job.py
-    │   └── observations/
-    │      └── GPCP/...
-    │           ├── visualization/
-    │           │   ├── helper_funcs/
-    │           │   │   └── plot_func_map.py
-    │           │   ├── plots/...
-    │           │   │   └── conv_itcz_cl_0.png
-    │           │   ├── plots2/...
-    │           │   │   └── conv_itcz_cl_0.svg
-    │           │   ├── calc_metric.py
-    │           │   ├── main_func.py
-    │           │   └── submit_as_job.py
-    │           └── conv/
-    │               └── conv_map_correlation/
-    │                   ├── calc_metric.py
-    │                   ├── main_func.py
-    │                   └── submit_as_job.py
-    ├── utils/...
-    │    ├── util_calc/...
-    │    │   └── doc_metrics/...
-    │    │       └── mean_area/
-    │    │           └── mean_area.py
-    │    ├── util_cmip/...
-    │    │   ├── get_cmip_data.py
-    │    │   └── ecs_data.py
-    │    ├── util_obs/...
-    │    │   └── get_GPCP_data.py
-    │    ├── util_qsub/
-    │    │   ├── interactive_script.py
-    │    │   └── submission_funcs.py
-    │    └── user_specs.py
-    └── environment.yml
+│   ├── get_metrics/
+│   │   └── observations/
+│   │       ├── ERA5/...
+│   │       │   └── satfrac_timeseries/
+│   │       │       ├── calc_metric.py
+│   │       │       ├── main_func.py
+│   │       │       └── submit_as_job.py
+│   │       └── IMERG/...
+│   │           ├── mean_area/
+│   │           │   ├── plot_func/
+│   │           │   │   └── map_subplot.py
+│   │           │   ├── plots/...
+│   │           │   │   └── snapshot_0.png
+│   │           │   ├── calc_metric.py
+│   │           │   ├── main_func.py
+│   │           │   └── submit_as_job.py
+│   │           └── pr_percentiles/
+│   │               ├── calc_metric.py
+│   │               ├── main_func.py
+│   │               └── submit_as_job.py
+│   ├── utils/...
+│   │    ├── util_calc/...
+│   │    │   └── doc_metrics/...
+│   │    │       └── mean_area/
+│   │    │           └── mean_area.py
+│   │    ├── util_obs/...
+│   │    │   ├── get_era5_data.py
+│   │    │   └── get_imerg_data.py
+│   │    ├── util_qsub/
+│   │    │   ├── interactive_script.py
+│   │    │   └── submission_funcs.py
+│   │    └── user_specs.py
+│   └── environment.yml
 ```
 
 ### How to use repository
