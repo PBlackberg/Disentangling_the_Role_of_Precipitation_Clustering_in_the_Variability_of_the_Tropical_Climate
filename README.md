@@ -36,7 +36,12 @@ Disentangling_the_Role_of_Precipitation_Clustering_in_the_Variability_of_the_Tro
 ├── gadi/
 │   ├── get_metrics/
 │   │   └── observations/
-│   │      └── IMERG/...
+│   │       ├── ERA5/...
+│   │       │   └── satfrac_timeseries/
+│   │       │       ├── calc_metric.py
+│   │       │       ├── main_func.py
+│   │       │       └── submit_as_job.py
+│   │       └── IMERG/...
 │   │           ├── mean_area/
 │   │           │   ├── plot_func/
 │   │           │   │   └── map_subplot.py
@@ -55,7 +60,8 @@ Disentangling_the_Role_of_Precipitation_Clustering_in_the_Variability_of_the_Tro
 │   │    │       └── mean_area/
 │   │    │           └── mean_area.py
 │   │    ├── util_obs/...
-│   │    │   └── get_IMERG_data.py
+│   │    │   ├── get_era5_data.py
+│   │    │   └── get_imerg_data.py
 │   │    ├── util_qsub/
 │   │    │   ├── interactive_script.py
 │   │    │   └── submission_funcs.py
@@ -64,11 +70,16 @@ Disentangling_the_Role_of_Precipitation_Clustering_in_the_Variability_of_the_Tro
 └── local/
     ├── get_metrics/
     │   └── observations/
-    │      └── GRIDSAT/...
-    │           └── i_org/
-    │               ├── calc_metric.py
-    │               ├── main_func.py
-    │               └── submit_as_job.py
+    │       ├── CERES/...
+    │       │    └── rad_timeseries_clouds/
+    │       │        ├── calc_metric.py
+    │       │        ├── main_func.py
+    │       │        └── submit_as_job.py
+    │       └── GRIDSAT/...
+    │            └── i_org/
+    │                ├── calc_metric.py
+    │                ├── main_func.py
+    │                └── submit_as_job.py
     ├── utils/
     │    ├── util_calc/...
     │    │   └── doc_metrics/...
@@ -76,15 +87,17 @@ Disentangling_the_Role_of_Precipitation_Clustering_in_the_Variability_of_the_Tro
     │    │           └── I_org_calc.py
     │    ├── util_obs/...
     │    │   ├── get_ceres_data.py
-    │    │   └── get_ceres_data.py
+    │    │   ├── get_ceres_files.py
+    │    │   ├── get_gridsat_data.py
+    │    │   └── get_gridsat_files_one.py 
     │    └── user_specs.py
     └── environment.yml
 
 ```
 
 ### How to use repository
-Scripts to generate metrics from IMERG rainfall data are found in the "gadi" folder. <br>
-Scripts to generate metrics from GRIDSAT-B1 brightness temperature data are found in the "local" folder. <br>
+Scripts to generate metrics from IMERG rainfall data and ERA5 re-analysis data are found in the "gadi" folder. <br>
+Scripts to generate metrics from GRIDSAT-B1 brightness temperature data and CERES syn1deg data are found in the "local" folder. <br>
 These metrics can also be found on Zenodo, DOI: 10.5281/zenodo.16946243 <br>
 Note: This repository only includes examples of how the key metrics were generated. A more complete repository is available upon request.
 

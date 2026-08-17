@@ -7,10 +7,10 @@
 
 # == imports ==
 # -- Packages --
-import numpy as np
 import xarray as xr
 from pathlib import Path
 import matplotlib.pyplot as plt
+import numpy as np
 
 # -- util- and local scripts --
 import os
@@ -33,37 +33,45 @@ def import_relative_module(module_name, file_path):
         module_base = os.path.dirname(relative_path).replace("/", ".").strip(".")
         module_path = f"{module_base}.{module_name}"
     return importlib.import_module(module_path)
-mS = import_relative_module('user_specs',                                                   'utils')
-cW = import_relative_module('util_calc.area_weighting.globe_area_weight',                   'utils')
-pF = import_relative_module('util_plot.map_subplot',                                        'utils')
+mS = import_relative_module('user_specs',                                                       'utils')
+# metric_script = import_relative_module('util_calc.doc_metrics.rome.rome',                     'utils')
+pF = import_relative_module('util_plot.map_subplot',                                            'utils')
 
 
-def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines):
-    # -- add subplot settings --
-    xticks = [110, 120, 130, 140]
-    yticks = [-10, 0, 10]
-
+def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop = None, ds_ontop2 = None, lines = []):
     # print(ds)
+    # print(ds['var'])
+    # exit()
+
+    # -- add subplot settings --
+    # xticks = [110, 120, 130, 140]
+    # yticks = [-10, 0, 10]
+    xticks = [60, 120, 180, 240, 300]
+    # yticks = [-20, 0, 20]
+    yticks = [-10, 0, 10]
+    # print(ds)
+    units = r'mm day$^{-1}$'
     add_size = 4
     ds.attrs.update({ 
         # -- format axes --
-        'scale': 0.9, 'move_row': 0.12, 'move_col': 0.01,
-        'hide_colorbar': False, 'cbar_height': 0.035, 'cbar_pad': 0.12, 'cbar_label_pad': 0.1,   
-        'xlabel_pad': 0.09,   
-        'ylabel_pad': 0.085,
+        'scale': 1.175, 'move_row': 0.075, 'move_col': - 0.065,
+        'hide_colorbar': False, 'cbar_height': 0.05, 'cbar_pad': 0.1, 'cbar_label_pad': 0.15,   
+        'xlabel_pad': 0.125,   
+        'ylabel_pad': 0.05,
         'axtitle_xpad': 0, 'axtitle_ypad': 0.025,
 
         # -- format plot elements --
-        'vmin': 0, 'vmax': 40, 
-        'cmap': 'Blues', #'RdBu', 
+        # 'vmin': None, 'vmax': None, 
+        'vmin': 0.1, 'vmax': 0.9, 
+        'cmap': 'RdBu', #plt.get_cmap('tab20') , 
     
         # -- format text --
-        'cbar_label': f'std from mean [Nb]',                    'cbar_fontsize': 8 + add_size, 'cbar_numsize': 6 + add_size,             
-        'hide_xticks': False,   'xticks': xticks,               'xticks_fontsize': 6.5 + add_size,
-        'hide_xlabel': False,   'xlabel_label': 'longitude',    'xlabel_fontsize': 6.5 + add_size,
-        'hide_yticks': False,   'yticks': yticks,               'yticks_fontsize': 6 + add_size,
+        'cbar_label': f'precip [{units}]',                      'cbar_fontsize': 8 + add_size, 'cbar_numsize': 8 + add_size,             
+        'hide_xticks': False,   'xticks': xticks,               'xticks_fontsize': 8 + add_size,
+        'hide_xlabel': False,   'xlabel_label': 'longitude',    'xlabel_fontsize': 8 + add_size,
+        'hide_yticks': False,   'yticks': yticks,               'yticks_fontsize': 8 + add_size,
         'hide_ylabel': False,   'ylabel_label': 'latitude',     'ylabel_fontsize': 6.5 + add_size,
-        'axtitle_label':        title,                          'axtitle_fontsize': 9 + add_size -1,
+        'axtitle_label':        title,                          'axtitle_fontsize': 9 + add_size,
         'coastline_width': 0.6,
         'line_dots_size': 0.1,
         })
@@ -87,62 +95,44 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
     return fig
 
 
-# == calculate metric ==
+# == calculate ds_metric ==
 def calculate_metric(data_objects):
-    # -- create empty metric --
+    # -- metric name --
     metric_name = Path(__file__).resolve().parents[0].name
-    ds = xr.Dataset()
 
-    # == create metric ==
     # -- check data --
     da, process_requestd, count = data_objects
     # print(da)
     # exit()
 
-    # -- for area weighting --
-    da_area = cW.get_area_matrix(da.lat, da.lon)   
-
     # --loop through timesteps --
     metric_calc = []
     for i, timestep in enumerate(da.time):
         da_timestep = da.isel(time = i)
-
         # -- calculate metric --
-        # -- convective objects --
-        metric_timestep = (da_timestep * da_area).sum() / da_area.sum()
-        metric_timestep = xr.DataArray(metric_timestep.data)
+        metric_timestep = da_timestep.mean(dim = ('lat', 'lon')).load()
         metric_timestep = metric_timestep.expand_dims(dim = 'time')
-        metric_timestep = metric_timestep.assign_coords(time=[timestep.values])
+        metric_timestep = metric_timestep.assign_coords(time=[da_timestep.time.values])
         metric_calc.append(metric_timestep)
-
-        # -- visualize metric --
+        # -- visualize metric start --
         plot = False
         if plot:
-            # # -- create figure --
-            # width, height = 6.27, 9.69                      # max size (for 1 inch margins)
-            # width, height = 0.75 * width, 0.2 * height      # modulate size and subplot distribution
-            # ncols, nrows  = 1, 1
-            # fig, axes = plt.subplots(nrows, ncols, figsize = (width, height))
-
             # -- create figure --
             width, height = 6.27, 9.69                      # max size (for 1 inch margins)
-            width, height = 1 * width, 0.4 * height      # modulate size and subplot distribution
+            width, height = 1.85 * width, 0.35 * height      # modulate size and subplot distribution
             ncols, nrows  = 1, 1
             fig, axes = plt.subplots(nrows, ncols, figsize = (width, height))
 
             # -- plot data --
-            metric_plot = metric_timestep.data[0]
-            spatial_mean = da_timestep.mean(dim = ('lat', 'lon'))
-            da_plot = da_timestep # ((da_timestep - spatial_mean)).drop('time')  # anomalies from the spatial-mean
+            # metric_text = metric_timestep.data[0]
+            # spatial_mean = da_timestep.mean(dim = ('lat', 'lon'))
+            da_plot = da_timestep #((da_timestep - spatial_mean)).drop('time')  # anomalies from the spatial-mean
+            # da_plot = da_timestep < da_timestep.quantile(0.05, dim = ('lat', 'lon'))
             # da_plot =  da_plot / da_plot.std()
             title = (
-                f'time:{str(timestep.data)[0:14]}\n'   
-                f'{metric_name}: {metric_plot:.2e} [%],         '
-                f'mean: {spatial_mean.data:.2e} [mm/day]'
+                f'time:{str(metric_timestep.time.data)[2:18]}'   
+                # f'{metric_name}' #: {metric_text:.2e}'
                 )
-            # print(da_plot)
-            # exit()
-            # da_ontop = xr.where(conv_regions!= 0, 1, np.nan)    # .drop('time') 
             fig = plot_subplot(title,
                             fig = fig,
                             nrows = nrows,
@@ -150,12 +140,11 @@ def calculate_metric(data_objects):
                             axes = axes,
                             ds = xr.Dataset({'var': da_plot}), 
                             ds_contour = None, 
-                            ds_ontop = None,
-                            # ds_ontop = xr.Dataset({'var': da_ontop}), 
                             lines = [],
                             )
             # -- save figure --
-            folder = f'{os.path.dirname(__file__)}/plots/snapshots'
+            # folder = f'{os.path.dirname(__file__)}/plots/snapshots'
+            folder = f'/scratch/k10/cb4968/temp_plot_era5'
             filename = f'snapshot_{count * len(da.time) + i}.png'
             path = f'{folder}/{filename}'
             os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -163,18 +152,17 @@ def calculate_metric(data_objects):
             fig.savefig(path)
             print(f'plot saved at: {path}')
             plt.close(fig)
-            exit()
+            # exit()
+    # exit()
 
     # -- concatenate timesteps --
     metric_calc = xr.concat(metric_calc, dim = 'time')
-    # print(metric_calc)
-    # exit()
 
     # -- fill xr.dataset with metric --
-    ds[f'{metric_name}'] = metric_calc
-
+    ds = xr.Dataset()
+    ds[metric_name] = metric_calc
     # print(ds)
-    # print(ds[f'{metric_name}'])
     # exit()
+
     return ds
 

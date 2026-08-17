@@ -36,62 +36,72 @@ def import_relative_module(module_name, file_path):
 mS = import_relative_module('user_specs',                   'utils')
 jS = import_relative_module('submit_as_job',                __file__)
 mC = import_relative_module('calc_metric',                  __file__)
-gD = import_relative_module('util_obs.get_imerg_data',      'utils')
+gD = import_relative_module('util_obs.get_era5_data',      'utils')
 
 
 # == process data ==
-def post_process_data(da):
-    da = da.fillna(0)
+def process_data(da):
+    ''
     return da
 
 # == get metric ==
 def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, years, months, r_folder, r_filename, section_range, test):    
     folder_work, folder_scratch, _, _, _ = mS.get_user_specs()                                                                                            # for temporarily saving timestep
     print('initiating metric ..')
-    metric = []                  
-    count = 0             
+    metric = []
+    count = 0
     folder = f'{folder_work}/metrics/{r_folder}/{r_filename}'
     filename = f'{r_filename}_{section_range}.nc'
-    path_result = f'{folder}/{filename}'                                                                                             
-    for i, (year, month) in enumerate(zip(years, months)):                                                                          
-        _, num_days = calendar.monthrange(int(year), int(month))
-        days = list(range(1, num_days + 1))
-        for day in days:
-            # -- get data --      
-            time_str =      f'{year}-{int(month):02d}-{int(day):02d}'
-            process_request = ['precipitation', 'IMERG', time_str, t_freq, lon_area, lat_area, resolution]
-            if test:                                                                                                                            # for quickly testing timestep
-                print('getting test data')
-                try:
-                    folder = f'{folder_scratch}/temp_data/{r_folder}/{r_filename}'
-                    filename = f'{r_filename}_var_{year}_{month}_{day}.nc'
-                    path = f'{folder}/{filename}'
-                    da = xr.open_dataset(path)['var']
-                except:
-                    print('no saved test data')
-                    print('getting data for saving ..')
-                    da = gD.get_data(process_request, process_data_further = post_process_data)                                                      # get data (for test)
-                    os.makedirs(os.path.dirname(path), exist_ok=True)
-                    xr.Dataset({'var': da}).to_netcdf(path)
-                    print('saved test data ..')
-            else:
-                print('getting data ..')
-                da = gD.get_data(process_request, process_data_further = post_process_data)       
-            # -- get metric --     
-            data_objects = [da, process_request, count]                                                                              
-            metric.append(mC.calculate_metric(data_objects))
-            print(f'finished year: {year} month: {month} day: {day}')
-            if test:    
-                os.remove(path)
-            count += 1
+    path_result = f'{folder}/{filename}'
+    if os.path.exists(path_result):
+        print("File already exists") 
+        print(f'saved at: {path_result}')          
+    else:
+        print('getting data ..')
+        # print(years[0])
+        # print(years[1])
         # exit()
-    ds = xr.concat(metric, dim='time')
-    print('concatenated section results')
-    # -- save result from section --
-    print(f'saving section results from: {dataset}')
-    os.makedirs(os.path.dirname(path_result), exist_ok=True)
-    ds.to_netcdf(path_result, mode="w")
-    print('saved section result')
+        folder = '/g/data/k10/cb4968/era5_daily_means/satfrac'
+        path = f'{folder}/{f"era5_satfrac_daily_mean_{years[0]}.nc"}'   # each job does one year, which becomes the first year in its list
+        ds = xr.open_dataset(path)
+        da =  ds['sat_frac'].load()
+        # print(ds)
+        # exit()
+        # print(da)
+        da = da.assign_coords(lon=((da.lon + 360) % 360))
+        da = da.sortby('lon')
+        # print(da)
+        # exit()
+        # -- select region of interest --
+        da = da.sel(lon = slice(int(lon_area.split(':')[0]), int(lon_area.split(':')[1])), 
+                    lat = slice(int(lat_area.split(':')[0]), int(lat_area.split(':')[1]))
+                    )
+        # print(da)
+        # exit()
+        for i, (year, month) in enumerate(zip(years, months)):                                                                              
+            _, num_days = calendar.monthrange(int(year), int(month))
+            days = list(range(1, num_days + 1))
+            for day in days:
+                # -- get data --      
+                time_str =      f'{year}-{int(month):02d}-{int(day):02d}'
+                process_request = ['', dataset, time_str, t_freq, lon_area, lat_area, resolution]
+                da_day = da.sel(time = time_str)
+                # print(da_day)
+                # exit()
+                # -- get metric --     
+                data_objects = [da_day, process_request, count]                                                                           
+                metric.append(mC.calculate_metric(data_objects))
+                print(f'finished year: {year} month: {month} day: {day}')
+                # if test:    
+                #     os.remove(path)
+                count += 1
+        ds = xr.concat(metric, dim='time')
+        print('concatenated section results')
+        # -- save result from section --
+        print(f'saving section results from: {dataset}')
+        os.makedirs(os.path.dirname(path_result), exist_ok=True)
+        ds.to_netcdf(path_result, mode="w")
+        print('saved section result')
 
 
 # == concatenate results ==
@@ -107,7 +117,7 @@ def concat_result(r_folder, r_filename, test):
     # ds = xr.open_mfdataset(temp_files, combine="by_coords", engine="netcdf4", parallel=True).load()
     # print(ds)
     # if not test:
-    #     # -- save result --
+    # #     # -- save result --
     #     folder = f'{folder_work}/metrics/{r_folder}'
     #     filename = f'{r_filename}.nc'
     #     path = f'{folder}/{filename}'
@@ -151,7 +161,7 @@ if __name__ == '__main__':
             year2_section, month2_section = time_section[-1]
             section_range =  f'{year1_section}_{month1_section}-{year2_section}_{month2_section}'   
             main(switch =           {'calc': True, 
-                                     'concat': True},
+                                     'concat': False},
                  dataset =          d,
                  t_freq =           t,
                  lon_area =         lon,

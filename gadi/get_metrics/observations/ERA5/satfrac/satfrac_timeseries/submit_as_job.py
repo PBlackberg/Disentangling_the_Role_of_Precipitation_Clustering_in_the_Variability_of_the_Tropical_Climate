@@ -39,12 +39,12 @@ sJ = import_relative_module('util_qsub.submission_funcs',   'utils')
 # == Set specs ==
 def set_specs():
     datasets = (                                                                                                                    # 
-        'IMERG',                                                                                                                    # 
+        'ERA5',                                                                                                                     # 
         )                                                                                                                           #
     t_freqs = (                                                                                                                     #
         # 'hrly',                                                                                                                   # animations
-        '3hrly',                                                                                                                    # 
-        # 'daily',                                                                                                                  #
+        # '3hrly',                                                                                                                  # 
+        'daily',                                                                                                                    #
         # 'monthly',                                                                                                                #
         )                                                                                                                           #
     lon_areas = (                                                                                                                   # set lon extent
@@ -58,18 +58,19 @@ def set_specs():
         '310:359',                                                                                                                  # Atlantic
         )                                                                                                                           #
     lat_areas = (                                                                                                                   # set lat extent (can be looped)
-        # '-90:90',  
         # '-30:30',                                                                                                                 # Tropics
         # '-20:20',                                                                                                                 # Central tropics
-        '-13:13',                                                                                                                   # Deep tropics
         # '-10:10',                                                                                                                 # Equator
-        )         
+        '-13:13',                                                                                                                   # Deep tropics
+        )                                                                                                                           #
     resolutions = (                                                                                                                 #
-        0.1,                                                                                                                        # CMIP, lowest common            
+        1.,                                                                                                                         # 
+        # 0.25,                                                                                                                     # 
         )                                                                                                                           #
-    time_periods = (                                                                                                                # time_periods for metric (can be looped)
-        '2001-01:2023-12',                                                                                                          # full
+    time_periods = (                                                                                                                # time_periods for metric (can be looped)    
+        '2001-01:2023-12',                                                                                                          #
         )                                                                                                                           #
+    
     return datasets, t_freqs, lon_areas, lat_areas, resolutions, time_periods
 
 def get_timesections(n_jobs, time_period):
@@ -118,13 +119,13 @@ def main():
         [print(f) for f in [d, t, lon, lat, r, p]]
         r_folder, r_filename = get_path(d, t, lon, lat, r, p)
         # -- clear temp calc from associated folder --                                                                              #
-        folder = f'{folder_scratch}/temo_calc/{r_folder}/{r_filename}'                                                              #
+        folder = f'{folder_scratch}/temp_calc/{r_folder}/{r_filename}'                                                              #
         os.makedirs(folder, exist_ok=True)                                                                                          #
         temp_files = [f'{folder}/{f}' for f in os.listdir(folder) if f.endswith('.nc')]                                             # clearing the folder that is filled with partial results
         [os.remove(path_temp) for path_temp in temp_files]                                                                          #
         # -- job resources (calc) --
         n_jobs_calc = 23  
-        walltime_calc = '1:00:00'                                                                                                   # job time for complete time_period
+        walltime_calc = '0:30:00'                                                                                                   # job time for complete time_period
         mem_calc = '75GB'                                                                                                           #
         ncpus_calc = 48                                                                                                              # if parallelizing, do it on the months
         # -- divide time_period calc, in n sections -- 
@@ -132,7 +133,7 @@ def main():
         if switch.get('calc'):    
             # print(f'\n-- submitting calc jobs, timeperiod: {p} --')
             walltime_calc = timedelta(hours=int(walltime_calc.split(':')[0]),                                                       #
-                                        minutes=int(walltime_calc.split(':')[1])) # / n_jobs_calc                                     # time for each job (max time given)
+                                        minutes=int(walltime_calc.split(':')[1])) # / n_jobs_calc                                   # time for each job (max time given)
             env_variables = {}                                                                                                      # sJ.check_env_variables(env_variables)
             env_variables['DATASET'] =          d
             env_variables['T_FREQ'] =           t
