@@ -39,7 +39,6 @@ mS = import_relative_module('user_specs',                                       
 pF = import_relative_module('plot_func.map_subplot',                               __file__)
 cW = import_relative_module('util_calc.area_weighting.globe_area_weight',           'utils')
 doc = import_relative_module('util_calc.doc_metrics.mean_area.mean_area',           'utils')
-# cC = import_relative_module('util_calc.doc_metrics.conv_cores.find_conv_cores',     'utils')
 doc2 = import_relative_module('util_calc.doc_metrics.I_org.I_org_calc',             'utils')
 
 # == metric funcs ==
@@ -74,12 +73,6 @@ def get_metric(da, time_period, metric_var = 'pr_percentiles_95'):
     for year in np.arange(int(year_start), int(year_end) + 1):
         path = f'{folder_metric}/{r_filename}_{year}_1-{year}_12.nc'
         paths.append(path)
-    # [print(f) for f in paths]
-    # exit()
-    # ds = xr.open_mfdataset(paths, combine='by_coords')
-    # print(ds)
-    # print(metric_var)
-    # exit()
     # -- get metric --
     try:
         threshold = xr.open_mfdataset(paths, combine='by_coords')[metric_var].load()
@@ -92,23 +85,7 @@ def get_metric(da, time_period, metric_var = 'pr_percentiles_95'):
         exit()
     return da_threshold
 
-# '/g/data/k10/cb4968/metrics/observations/IMERG/precip/pr_percentiles/IMERG/pr_percentiles_IMERG_3hrly_0-360_-30-30_3600x1800_2001-01_2023-12/pr_percentiles_IMERG_3hrly_0-360_-30-30_3600x1800_2001-01_2023-12_2001_1-2001_12.nc'
-# '/g/data/k10/cb4968/metrics/observations/IMERG/precip/pr_percentiles/IMERG/pr_percentiles_IMERG_3hrly_0-360_-30-30_3600x1800_2001-03_2023-12/pr_percentiles_IMERG_3hrly_0-360_-30-30_3600x1800_2001-03_2023-12_2001_1-2001_12.nc'
-
-# def get_saved_mean_pr():
-#     ''' /scratch/nf33/gs5098/data ''' 
-#     path = '/scratch/nf33/gs5098/data/precip_mean.nc'
-#     ds = xr.open_dataset(path)
-#     print(ds['precipitation'].data)
-#     exit()
-#     return ds
-
-
 def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, ds_ontop2, lines):
-    # print(ds)
-    # print(ds['var'])
-    # exit()
-
     # -- add subplot settings --
     xticks = [110, 120, 130, 140]
     yticks = [-10, 0, 10]
@@ -180,8 +157,6 @@ def calculate_metric(data_objects):
         metric_calc = []
         for i, timestep in enumerate(da.time):
             da_timestep = da.isel(time = i)
-            # kernel_size, decay_distance = 8, 1
-            # da_timestep = cC.apply_smoothing(da_timestep, kernel_size, decay_distance)
 
             smoothing, kernel_size, decay_distance =        True,   6,    1     # for pre-process
             exceed_threshold, local_extrema_flag, window =  True, 'max',  3         # for cores
@@ -191,7 +166,7 @@ def calculate_metric(data_objects):
             # -- convective objects --
             conv_regions = (da_smooth > threshold) * 1
             labels_np = skm.label(conv_regions, background = 0, connectivity = 2)       # returns numpy array
-            # labels_np = cB.connect_boundary(labels_np)                                  # connect objects across boundary
+            # labels_np = cB.connect_boundary(labels_np)                                  # connect objects across boundary, if calculating tropics-wide (less important for high-res)
             labels = np.unique(labels_np)[1:]                                           # first unique value (zero) is background
             labels_xr = xr.DataArray(                                                   # convective objects
                 data = labels_np,
@@ -263,8 +238,8 @@ def calculate_metric(data_objects):
         # -- fill xr.dataset with metric --
         ds[f'{metric_name}_thres_{quant_str}'] = metric_calc
 
-    print(ds)
-    exit()
+    # print(ds)
+    # exit()
     return ds
 
 

@@ -42,14 +42,14 @@ def set_specs():
         '3hrly',                                                                                                                    # 
         )                                                                                                                           #
     lon_areas = (                                                                                                                   # set lon extent
-        # '0:360',                                                                                                                    # Full domain                                         
+        '0:360',                                                                                                                    # Full domain                                         
         # '0:49',                                                                                                                   # Africa
         # '50:99',                                                                                                                  # Indian Ocean
         # '100:149',                                                                                                                # Maritime Continent                                    
         # '150:204',                                                                                                                # West / central Pacific    (55 degrees, 5 degrees wider)
-        '205:259',                                                                                                                # East Pacific              (55 degrees, 5 degrees wider)
-        '260:309',                                                                                                                # Amazon
-        '310:359',                                                                                                                # Atlantic
+        # '205:259',                                                                                                                # East Pacific              (55 degrees, 5 degrees wider)
+        # '260:309',                                                                                                                # Amazon
+        # '310:359',                                                                                                                # Atlantic
         )                                                                                                                           #
     lat_areas = (                                                                                                                   # set lat extent (can be looped)
         # '-90:90',                                                                                                                 #

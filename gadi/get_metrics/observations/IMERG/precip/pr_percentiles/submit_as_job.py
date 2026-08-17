@@ -38,13 +38,13 @@ sJ = import_relative_module('util_qsub.submission_funcs',   'utils')
 
 # == Set specs ==
 def set_specs():
-    datasets = (                                                                                                                    # Models ordered by change in temperature with warming    
-        'IMERG',                                                                                                                     # 1
+    datasets = (                                                                                                                    # 
+        'IMERG',                                                                                                                    # 
         )                                                                                                                           #
     t_freqs = (                                                                                                                     #
         # 'hrly',                                                                                                                   # animations
-        '3hrly',                                                                                                                  # 
-        # 'daily',                                                                                                                    #
+        '3hrly',                                                                                                                    # 
+        # 'daily',                                                                                                                  #
         # 'monthly',                                                                                                                #
         )                                                                                                                           #
     lon_areas = (                                                                                                                   # set lon extent
@@ -58,16 +58,16 @@ def set_specs():
         # '310:359',                                                                                                                # Atlantic
         )                                                                                                                           #
     lat_areas = (                                                                                                                   # set lat extent (can be looped)
-        '-30:30',                                                                                                                   # Tropics
+        '-30:30',                                                                                                                 # Tropics
         # '-20:20',                                                                                                                 # Central tropics
+        # '-13:13',                                                                                                                   # Deep tropics
         # '-10:10',                                                                                                                 # Equator
         )                                                                                                                           #
     resolutions = (                                                                                                                 #
         0.1,                                                                                                                        # CMIP, lowest common            
         )                                                                                                                           #
     time_periods = (                                                                                                                # time_periods for metric (can be looped)
-        # '2002-08:2002-12',                                                                                                           # full
-        '2001-01:2023-12',   
+        '2001-01:2023-12',                                                                                                          #
         )                                                                                                                           #
     
     return datasets, t_freqs, lon_areas, lat_areas, resolutions, time_periods

@@ -53,9 +53,9 @@ def set_specs():
         )                                                                                                                           #
     lat_areas = (                                                                                                                   # set lat extent (can be looped)
         # '-90:90',                                                                                                                 #
-        '-30:30',                                                                                                                 # Tropics
+        # '-30:30',                                                                                                                 # Tropics
         # '-20:20',                                                                                                                 # Central tropics
-        # '-13:13',                                                                                                                   # 
+        '-13:13',                                                                                                                   # 
         # '-10:10',                                                                                                                 # Equator
         )                                                                                                                           #
     resolutions = (                                                                                                                 #

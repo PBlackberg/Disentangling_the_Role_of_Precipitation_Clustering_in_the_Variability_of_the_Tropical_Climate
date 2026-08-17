@@ -41,7 +41,6 @@ gD = import_relative_module('util_obs.get_imerg_data',      'utils')
 
 # == process data ==
 def post_process_data(da):
-    # da = da * 24                # change units from [mm/hr -> mm/day], not necessary
     da = da.fillna(0)
     return da
 

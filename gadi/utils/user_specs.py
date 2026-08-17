@@ -17,7 +17,7 @@ import os
 
 # == get user ==
 def get_user_specs(show = False):
-    username =          os.path.expanduser("~").split('/')[-1]                          # ex; 'cb4968'    
+    username =          os.path.expanduser("~").split('/')[-1]                          # ex: 'cb4968'    
     # -- project for saved metrics --
     storage_project =   (
         'k10',

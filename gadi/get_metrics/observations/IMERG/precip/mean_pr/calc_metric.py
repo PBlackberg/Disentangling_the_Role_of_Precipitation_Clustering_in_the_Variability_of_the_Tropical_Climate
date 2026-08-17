@@ -35,69 +35,10 @@ def import_relative_module(module_name, file_path):
     return importlib.import_module(module_path)
 mS = import_relative_module('user_specs',                                                   'utils')
 cW = import_relative_module('util_calc.area_weighting.globe_area_weight',                   'utils')
-# doc = import_relative_module('util_calc.doc_metrics.area_fraction.area_fraction',           'utils')
 pF = import_relative_module('util_plot.map_subplot',                                        'utils')
-# cC = import_relative_module('util_calc.doc_metrics.conv_cores.find_conv_cores',             'utils')
-# doc2 = import_relative_module('util_calc.doc_metrics.I_org.I_org_calc',                     'utils')
 
-
-# def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines):
-#     # print(ds)
-#     # print(ds['var'])
-#     # exit()
-
-#     # -- add subplot settings --
-#     xticks = [60, 120, 180, 240, 300]
-#     yticks = [-20, 0, 20]
-#     # print(ds)
-#     ds.attrs.update({ 
-#         # -- format axes --
-#         'scale': 1.05, 'move_row': 0.125, 'move_col': 0.025,
-#         'hide_colorbar': False, 'cbar_height': 0.035, 'cbar_pad': 0.2, 'cbar_label_pad': 0.175,   
-#         'xlabel_pad': 0.15,   
-#         'ylabel_pad': 0.085,
-#         'axtitle_xpad': 0, 'axtitle_ypad': 0.05,
-
-#         # -- format plot elements --
-#         'vmin': -2, 'vmax': 2, 
-#         'cmap': 'RdBu', 
-    
-#         # -- format text --
-#         'cbar_label': f'std from mean [Nb]',                    'cbar_fontsize': 8, 'cbar_numsize': 6,             
-#         'hide_xticks': False,   'xticks': xticks,               'xticks_fontsize': 6.5,
-#         'hide_xlabel': False,   'xlabel_label': 'longitude',    'xlabel_fontsize': 6.5,
-#         'hide_yticks': False,   'yticks': yticks,               'yticks_fontsize': 6,
-#         'hide_ylabel': False,   'ylabel_label': 'latitude',     'ylabel_fontsize': 6.5,
-#         'axtitle_label':        title,                          'axtitle_fontsize': 9,
-#         'coastline_width': 0.6,
-#         'line_dots_size': 0.1,
-#         })
-#     # print(ds)
-#     # exit()
-#     if ds_contour is not None:
-#         ds_contour.attrs.update({
-#             # -- contour --
-#             'name': 'var', 
-#             'threshold': [ds_contour["var"].quantile(0.5), ds_contour["var"].quantile(0.9)], 
-#             'color': 'k', 
-#             'linewidth': 0.5,
-#             'contour_text_size': 4.5,
-#             })
-
-    # # -- plot subplot --
-    # row, col = 0, 0
-    # # [print(f) for f in [fig, nrows, ncols, row, col, axes, ds, ds_contour, ds_ontop, lines]]
-    # # exit()
-
-    # ax = pF.plot(fig, nrows, ncols, row, col, axes, ds, ds_contour, ds_ontop, lines)
-
-    # return fig
 
 def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines):
-    # print(ds)
-    # print(ds['var'])
-    # exit()
-
     # -- add subplot settings --
     xticks = [110, 120, 130, 140]
     yticks = [-10, 0, 10]
@@ -232,8 +173,8 @@ def calculate_metric(data_objects):
     # -- fill xr.dataset with metric --
     ds[f'{metric_name}'] = metric_calc
 
-    print(ds)
-    print(ds[f'{metric_name}'])
-    exit()
+    # print(ds)
+    # print(ds[f'{metric_name}'])
+    # exit()
     return ds
 
